@@ -1,264 +1,353 @@
 <!doctype html>
-
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Metawin — Chaos Run (Landing Game)</title>
-  <meta name="description" content="Metawin Chaos Run — playable landing-page mini game. Play, collect $CASINO tokens and claim rewards on Metawin." />
-  <style>
-    :root{--bg:#070610;--neon1:#7b00ff;--neon2:#00ff9b;--accent:#ff2d6f}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#0b0420 0%, #070610 100%);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#fff}
-    .wrap{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
-    .card{width:1200px;max-width:100%;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;padding:14px;box-shadow:0 10px 40px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
-    header{display:flex;gap:16px;align-items:center;padding:12px}
-    .logo{display:flex;align-items:center;gap:12px}
-    .logo .mark{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--neon1),var(--neon2));display:flex;align-items:center;justify-content:center;font-weight:800}
-    h1{margin:0;font-size:20px}
-    #gameCanvas{width:100%;height:640px;border-radius:12px;background:#051;display:block}
-    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
-    button{background:linear-gradient(90deg,var(--neon1),var(--neon2));border:0;padding:10px 16px;border-radius:10px;color:#071;cursor:pointer;font-weight:700}
-    .muted{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#ddd}
-    .panel{display:flex;gap:14px;align-items:center}
-    .hud{position:absolute;left:26px;top:22px;color:#fff;font-weight:700}
-    .cta{position:absolute;right:26px;top:22px;display:flex;gap:8px}
-    .overlay{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center}
-    .screen{width:900px;max-width:96%;background:rgba(8,6,12,0.85);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);text-align:center}
-    .screen h2{margin:6px 0 12px}
-    .download-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-    .asset-btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 10px;border-radius:10px;color:#fff;cursor:pointer}
-    footer{margin-top:12px;color:#999;font-size:13px;text-align:center}
-    a.cta-link{color:#071;text-decoration:none;font-weight:800;padding:10px 14px;border-radius:10px;background:white}
-    /* small screens */
-    @media(max-width:720px){ #gameCanvas{height:420px} }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🚀 MetaWin — Tribute Slots (Creators on X)</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --neon-a:#00f6ff;
+    --neon-b:#08a6ff;
+    --bg:#020204;
+    --card:#0b0b0c;
+  }
+  html,body{height:100%;margin:0;font-family:'Orbitron',sans-serif;background:radial-gradient(1200px 800px at 10% 10%, rgba(0,255,255,0.02), transparent), var(--bg); color:#eafcff; text-align:center; overflow:auto}
+  header{padding:22px 12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;position:sticky;top:0;background:linear-gradient(180deg, rgba(2,2,4,0.6), rgba(2,2,4,0.4));backdrop-filter: blur(6px);}
+  header h1{margin:0;color:var(--neon-a);font-size:clamp(1.6rem,3.6vw,2.4rem); text-shadow:0 0 18px rgba(0,255,255,0.12)}
+  header .sub{color:#dff;opacity:0.95;font-size:0.95rem}
+  #splash{
+    position:fixed; inset:0; z-index:999; display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background: linear-gradient(180deg, rgba(0,8,20,0.85), rgba(0,0,0,0.94));
+    padding:18px;
+  }
+  #splash .title{ font-size:clamp(2.2rem,6vw,4.6rem); color:var(--neon-a); margin:6px 0 8px; text-shadow:0 0 40px rgba(0,240,255,0.12) }
+  #splash .desc{ max-width:900px; color:#dff; opacity:0.95; margin-bottom:18px; font-size:1.02rem }
+  #tribute { display:grid; grid-template-columns: repeat(auto-fit,minmax(88px,1fr)); gap:12px; width:min(1080px,92%); margin:10px auto; align-items:center; justify-items:center; }
+  .creator { display:flex;flex-direction:column;align-items:center; gap:8px; color:#dff; font-size:0.88rem }
+  .creator img{ width:88px;height:88px;border-radius:16px;border:2px solid rgba(0,255,255,0.06); object-fit:cover; box-shadow: 0 6px 22px rgba(0,0,0,0.5); background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)) }
+  .reel-wrap{ display:flex; gap:clamp(18px,4vw,48px); justify-content:center; align-items:center; padding:22px; margin:26px auto; border-radius:18px; max-width:1200px; border:2px solid rgba(0,255,255,0.04); background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); }
+  .reel{ flex:1 1 0; max-width:340px; aspect-ratio:1/1.05; border-radius:16px; background:linear-gradient(180deg,var(--card), #0a0a0a); display:flex; align-items:center; justify-content:center; overflow:hidden; border:3px solid rgba(0,255,255,0.08); transition:transform .14s ease, box-shadow .14s ease; }
+  .reel img{ max-width:88%; max-height:88%; object-fit:contain; border-radius:12px }
+  .reel.spinning{ transform: translateY(-6px); animation: reelGlow .9s infinite alternate; }
+  @keyframes reelGlow{ from{ box-shadow:0 18px 36px rgba(0,255,255,0.06)} to{ box-shadow:0 38px 120px rgba(0,150,255,0.12)} }
+  #controls{ display:flex; gap:12px; justify-content:center; align-items:center; margin-top:8px; flex-wrap:wrap; padding:8px 12px }
+  .btn{ cursor:pointer; border-radius:12px; border:0; padding:12px 22px; font-size:1rem; background:linear-gradient(90deg,var(--neon-a),var(--neon-b)); color:#001; box-shadow:0 8px 30px rgba(0,255,255,0.06); transition: transform .08s }
+  .btn:active{ transform:scale(.98) }
+  #result{ margin-top:12px; min-height:1.2em; font-size:clamp(1rem,1.6vw,1.2rem); color:#eaffff }
+  footer{ margin:28px 0 56px; color:var(--neon-a) }
+
+  /* responsive tweaks */
+  @media (max-width:720px){
+    .creator img{ width:72px;height:72px }
+    .reel-wrap{ gap:10px; padding:12px }
+    .reel{ max-width:220px }
+  }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <header>
-        <div class="logo">
-          <div class="mark">MW</div>
-          <div>
-            <h1>Metawin — Chaos Run</h1>
-            <div style="color:#bbb;font-size:13px;margin-top:4px">Playable landing-page demo — collect $CASINO tokens & claim rewards</div>
-          </div>
-        </div>
-        <div style="flex:1"></div>
-        <div class="panel">
-          <button id="playBtn">Play Now</button>
-          <button id="claimBtn" class="muted">Join $CASINO</button>
-        </div>
-      </header><div style="position:relative">
-    <canvas id="gameCanvas" width="1280" height="720"></canvas>
-    <div class="hud"><div>Score: <span id="hudScore">0</span></div></div>
-    <div class="cta"><button id="downloadAssets" class="muted">Export Assets</button></div>
+  <div id="splash" role="dialog" aria-modal="true">
+    <div class="title">Tribute to MetaWinners Creators on X</div>
+    <div class="desc">This landing page celebrates creators who've been actively tweeting about MetaWin. Their profile pictures are loaded below and used as slot symbols — a small tribute to the community. Click "Enter" to spin the PFP-powered reels.</div>
 
-    <div id="startOverlay" class="overlay"><div class="screen">
-      <h2>Enter the Chaos Run</h2>
-      <p style="color:#bbb">Drag & drop your character image onto the canvas to use it in-game. If none, a stylized Metawin avatar will be used.</p>
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
-        <button id="startPlay">Play — Get Tokens</button>
-        <button id="showAssets" class="muted">Preview Assets</button>
-      </div>
-      <div style="margin-top:10px;color:#999;font-size:13px">Your play will show a CTA at game over to claim winnings on Metawin.</div>
-    </div></div>
+    <div id="tribute" aria-live="polite">Loading creators…</div>
 
-    <div id="assetOverlay" class="overlay" style="display:none"><div class="screen">
-      <h2>Generated Assets (Preview)</h2>
-      <p style="color:#bbb">Below are in-browser generated PNGs you can download and integrate. The Export button will package everything as separate PNGs (one per asset) and trigger downloads.</p>
-      <div class="download-links" id="assetList"></div>
-      <div style="margin-top:10px"><button id="closeAssets" class="muted">Close</button></div>
-    </div></div>
-
+    <button id="enterGame" class="btn" style="margin-top:18px">Enter</button>
   </div>
 
-  <footer>Tip: Embed this HTML as the landing game or iframe it inside your Metawin marketing pages. Customize the claim URL in the game over screen.</footer>
-</div>
+  <header>
+    <h1>🚀 Metawinners — Creator Slots</h1>
+    <div class="sub">PFP-powered reels — a tribute to creators who champion MetaWin on X</div>
+  </header>
 
-  </div><script>
-/* Single-file asset-packed landing-game. All assets are procedurally drawn in-canvas so you receive a full working HTML file. 
-   Drop your character image onto the canvas to replace the placeholder.
+  <main>
+    <div class="reel-wrap" aria-hidden="false">
+      <div class="reel" id="r0">🎯</div>
+      <div class="reel" id="r1">🎯</div>
+      <div class="reel" id="r2">🎯</div>
+    </div>
+
+    <div id="controls" role="region" aria-label="slot controls">
+      <button id="spin" class="btn">SPIN</button>
+      <button id="addCredit" class="btn">+10 Credits</button>
+      <button id="mute" class="btn">🔊 Sound</button>
+    </div>
+
+    <div id="result" role="status" aria-live="polite"></div>
+  </main>
+
+  <canvas id="confettiCanvas"></canvas>
+  <footer>Built as a community tribute — links open on X.</footer>
+
+<script>
+/*
+  How this works:
+  - 'creatorHandles' holds 30 X handles discovered tweeting about MetaWin / MetaWinners.
+  - We load their profile images through unavatar.io (public avatar proxy) and add them to 'combinedSymbols'.
+  - The reels display those images as tokens; a tribute grid is shown on the splash.
+  - If an avatar fails, we fallback to a DiceBear identicon so the reels always have an image.
 */
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let W = canvas.width, H = canvas.height;
+/* ---------- curated handles (30) ---------- 
+   These were found active in MetaWin conversations on X; you can edit this list.
+*/
+const creatorHandles = [
+  "Skelhorn",
+  "Meta_Winners",
+  "metawin",
+  "DarkSkyWeb3",
+  "teksmeyt",
+  "ShinyNfts",
+  "Masaronii",
+  "Nightmare27987",
+  "baseonethl2",
+  "0x_Ckrown",
+  "rektonomist_",
+  "iDaryAlAli",
+  "WinUnionINA",
+  "WINterSBP_",
+  "winmetawin0825",
+  "metawinhq",
+  "Masaroni",        // similar names appear in the community
+  "ler_oyy",
+  "1996_pt",
+  "JayM9x",
+  "0xDREZ",
+  "AkSmall24",
+  "0xDREZ",         // duplicate safe-guarded later
+  "0x_Ckrown",      // duplicate safe-guarded later
+  "cryptocomet10",
+  "kobraboy_eth",
+  "thomaslpb",
+  "judenxt",
+  "gagain_jake0",
+  "Dan_Donoghue_"
+];
 
-function resize(){
-  const cssW = Math.min(window.innerWidth-80, 1200);
-  const cssH = Math.round(cssW * 9/16);
-  canvas.style.width = cssW + 'px'; canvas.style.height = cssH + 'px';
-  const ratio = Math.min(window.devicePixelRatio||1, 2);
-  W = canvas.width = Math.round(cssW * ratio); H = canvas.height = Math.round(cssH * ratio);
-  ctx.setTransform(ratio,0,0,ratio,0,0);
+/* ---------- runtime state ---------- */
+const emojiSymbols = ["🍒","💎","7️⃣","🍀","⭐"];
+let combinedSymbols = emojiSymbols.map(s=>({type:'emoji', v:s}));
+let credits = 100;
+let muted = false;
+
+const reels = [document.getElementById('r0'), document.getElementById('r1'), document.getElementById('r2')];
+const creditEl = document.getElementById('creditValue'); // not used here; we show credits via result area for simplicity
+const resultEl = document.getElementById('result');
+
+/* ---------- helpers to fetch avatar (no API key) ---------- */
+function avatarProxyUrl(handle){
+  // unavatar.io supports multiple providers and returns the user's current avatar
+  // format: https://unavatar.io/twitter/<handle>?size=512
+  // It's public and convenient for quick PFP pulls.
+  return `https://unavatar.io/twitter/${encodeURIComponent(handle)}?size=512`;
 }
-window.addEventListener('resize', resize); resize();
-
-// Asset generation helpers — create offscreen canvases
-function makeCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
-function toDataUrl(canvas){ return canvas.toDataURL('image/png'); }
-
-// Procedural assets: token, slot, roulette, chip, UI button, logo mark
-const ASSETS = {};
-function genAssets(){
-  // Token (M logo)
-  const t = makeCanvas(256,256); const tc=t.getContext('2d');
-  // neon radial
-  const g = tc.createRadialGradient(128,128,20,128,128,140); g.addColorStop(0,'rgba(0,255,140,0.9)'); g.addColorStop(1,'rgba(0,0,0,0)'); tc.fillStyle=g; tc.fillRect(0,0,256,256);
-  tc.beginPath(); tc.arc(128,128,68,0,Math.PI*2); tc.fillStyle='#ffd94d'; tc.fill();
-  tc.font='80px serif'; tc.fillStyle='#081'; tc.textAlign='center'; tc.textBaseline='middle'; tc.fillText('M',128,128);
-  ASSETS.token = toDataUrl(t);
-
-  // Slot machine
-  const s = makeCanvas(240,320); const sc=s.getContext('2d');
-  sc.fillStyle='#2b002b'; sc.fillRect(0,0,240,320);
-  sc.fillStyle='#ffd700'; sc.fillRect(24,24,192,68);
-  sc.fillStyle='#fff'; sc.font='22px sans-serif'; sc.fillText('SLOT',120,64);
-  // reels
-  sc.fillStyle='#111'; sc.fillRect(24,110,192,160);
-  for(let i=0;i<3;i++){ sc.strokeStyle='#333'; sc.strokeRect(36 + i*56,126,48,48); sc.fillStyle=['#ff6b6b','#6bffb0','#6ba4ff'][i]; sc.fillRect(36 + i*56,126,48,48); }
-  ASSETS.slot = toDataUrl(s);
-
-  // Roulette wheel
-  const r = makeCanvas(240,240); const rc=r.getContext('2d');
-  rc.fillStyle='#090'; rc.beginPath(); rc.arc(120,120,100,0,Math.PI*2); rc.fill();
-  for(let i=0;i<12;i++){ rc.fillStyle = (i%2)?'#b30000':'#0a0'; rc.beginPath(); rc.moveTo(120,120); rc.arc(120,120,100,i*(Math.PI*2/12),(i+1)*(Math.PI*2/12)); rc.fill(); }
-  rc.fillStyle='#000'; rc.beginPath(); rc.arc(120,120,50,0,Math.PI*2); rc.fill(); ASSETS.roulette=toDataUrl(r);
-
-  // Chip stack
-  const c = makeCanvas(160,160); const cc=c.getContext('2d'); cc.fillStyle='#222'; cc.fillRect(0,0,160,160);
-  cc.beginPath(); cc.arc(80,80,56,0,Math.PI*2); cc.fillStyle='#ffd'; cc.fill(); cc.strokeStyle='#955'; cc.stroke(); ASSETS.chip = toDataUrl(c);
-
-  // UI play button
-  const b = makeCanvas(360,120); const bc=b.getContext('2d');
-  const bg=bc.createLinearGradient(0,0,360,0); bg.addColorStop(0,'#7b00ff'); bg.addColorStop(1,'#00ff9b'); bc.fillStyle=bg; roundRect(bc,6,6,348,108,18); bc.fill(); bc.fillStyle='rgba(0,0,0,0.18)'; roundRect(bc,6,6,348,108,18); bc.fill();
-  bc.fillStyle='#071'; bc.font='44px sans-serif'; bc.textAlign='center'; bc.textBaseline='middle'; bc.fillText('PLAY NOW',180,64);
-  ASSETS.playBtn = toDataUrl(b);
-
-  // Logo mark (MW)
-  const m = makeCanvas(180,180); const mc=m.getContext('2d'); mc.fillStyle='#000'; mc.fillRect(0,0,180,180);
-  mc.fillStyle='#7b00ff'; mc.fillRect(8,8,164,164); mc.fillStyle='#fff'; mc.font='bold 72px serif'; mc.textAlign='center'; mc.textBaseline='middle'; mc.fillText('MW',90,96);
-  ASSETS.logo = toDataUrl(m);
+function dicebearFallback(seed){
+  // deterministic fallback SVG PNG via dicebear (no CORS issue)
+  return `https://api.dicebear.com/7.x/thumbs/png?seed=${encodeURIComponent(seed)}&size=512`;
 }
 
-function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+/* ---------- preload avatars and build tribute grid ---------- */
+async function loadCreatorsPFPs(){
+  const tribute = document.getElementById('tribute');
+  tribute.innerHTML = '';
+  const seen = new Set();
 
-// generate assets on load
-genAssets();
+  // ensure only unique handles and limit to 30
+  const uniqueHandles = [];
+  for(const h of creatorHandles){
+    const hn = (h||'').trim();
+    if(!hn) continue;
+    if(seen.has(hn.toLowerCase())) continue;
+    seen.add(hn.toLowerCase());
+    uniqueHandles.push(hn);
+    if(uniqueHandles.length>=30) break;
+  }
 
-// Game variables
-let running=false; let distance=0; let score=0; let high = parseInt(localStorage.getItem('mw_high')||'0');
-const player = {x:160,y:0,w:110,h:150,vy:0,onGround:false,lane:1,boost:0};
-const obstacles = []; const coins = []; const particles = [];
-let spawnTimer=0; let last = performance.now();
+  // Try to load each avatar; add to combinedSymbols when ready.
+  for(const handle of uniqueHandles){
+    const imgUrl = avatarProxyUrl(handle);
+    const card = document.createElement('div'); card.className='creator';
+    const link = document.createElement('a'); link.href = `https://x.com/${handle}`; link.target='_blank'; link.rel='noopener noreferrer';
+    const name = document.createElement('div'); name.textContent='@'+handle; name.style.fontSize='0.86rem'; name.style.opacity='0.95';
+    const img = document.createElement('img');
 
-// Character image (user can drop to replace)
-let charImg = null; let charPlaceholder = null;
-// build a stylized placeholder character from canvas
-function genPlaceholder(){ const c=makeCanvas(400,600); const g=c.getContext('2d'); g.fillStyle='#061'; g.fillRect(0,0,400,600); g.fillStyle='#fff'; g.font='48px sans-serif'; g.textAlign='center'; g.fillText('METAWIN',200,280); g.fillStyle='#ff6b6b'; g.beginPath(); g.arc(200,160,80,0,Math.PI*2); g.fill(); charPlaceholder = new Image(); charPlaceholder.src = c.toDataURL(); }
-genPlaceholder();
+    // lazy loading & crossOrigin to increase chance of proper load
+    img.loading = 'lazy';
+    img.crossOrigin = 'anonymous';
+    img.alt = handle + ' avatar';
+    img.src = imgUrl;
 
-// drag & drop support
-canvas.addEventListener('dragover', e=>{ e.preventDefault(); });
-canvas.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(!f) return; const url = URL.createObjectURL(f); const img = new Image(); img.onload=()=>{ charImg = img; URL.revokeObjectURL(url); console.log('Character replaced'); }; img.src = url; });
+    // attach placeholders while loading
+    card.appendChild(img);
+    card.appendChild(link);
+    link.appendChild(name);
+    tribute.appendChild(card);
 
-// Input
-const keys = {}; window.addEventListener('keydown', e=>{ keys[e.key.toLowerCase()]=true; if(e.key===' ') e.preventDefault(); }); window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()]=false; });
-let touchStart=null; canvas.addEventListener('pointerdown', e=>{ touchStart={x:e.clientX,y:e.clientY,t:performance.now()}; }); canvas.addEventListener('pointerup', e=>{ if(!touchStart) return; const dx=e.clientX-touchStart.x, dy=e.clientY-touchStart.y; if(dy<-30) jump(); else if(Math.abs(dx)>40){ if(dx>0) moveRight(); else moveLeft(); } else tap(); touchStart=null; });
-function moveLeft(){ player.lane = Math.max(0, player.lane-1); }
-function moveRight(){ player.lane = Math.min(2, player.lane+1); }
-function jump(){ if(player.onGround){ player.vy=-900; player.onGround=false; } }
-function tap(){ jump(); }
+    // attempt to push into symbols when loaded; otherwise fallback
+    await new Promise(resolve=>{
+      let settled=false;
+      // success
+      img.onload = () => {
+        if(settled) return; settled=true;
+        combinedSymbols.push({ type:'img', v: img.src, handle });
+        resolve();
+      };
+      // error -> fallback to dicebear
+      img.onerror = () => {
+        if(settled) return; settled=true;
+        const fb = dicebearFallback(handle);
+        img.src = fb;
+        img.onload = () => {
+          combinedSymbols.push({ type:'img', v: img.src, handle });
+          resolve();
+        };
+        img.onerror = () => {
+          // last fallback to emoji
+          combinedSymbols.push({ type:'emoji', v: '⭐' });
+          resolve();
+        };
+      };
+      // safety timeout: if neither fires in 4s, fallback
+      setTimeout(()=>{
+        if(settled) return; settled=true;
+        if(!img.src){ img.src = dicebearFallback(handle); combinedSymbols.push({ type:'img', v: img.src, handle }); }
+        resolve();
+      }, 4000);
+    });
+  }
 
-// world spawn
-function spawnObstacle(){ const lane = Math.floor(Math.random()*3); const type = Math.random()<0.2?'slot':(Math.random()<0.4?'roulette':'chips'); const w=(type==='slot')?140: (type==='roulette'?160:120); const h=(type==='slot')?160: (type==='roulette'?160:100); obstacles.push({x:W/ (window.devicePixelRatio||1) + 200, y: H*0.6 - h, w,h,lane,type}); if(Math.random()<0.5){ const cx = obstacles[obstacles.length-1].x + 260; for(let i=0;i<3;i++) coins.push({x:cx + i*60, y: H*0.6 - 140 - i*6, w:36,h:36}); } }
+  // visible signal: how many PFP images added
+  const imgCount = combinedSymbols.filter(s=>s.type==='img').length;
+  console.log('PFPs loaded into symbol pool:', imgCount);
 
-// update loop
-function update(dt){ if(!running) return; // controls
- if(keys['a']||keys['arrowleft']) moveLeft(); if(keys['d']||keys['arrowright']) moveRight(); if(keys[' ']||keys['arrowup']||keys['w']) jump();
- // smooth lane
- const targetX = 160 + (player.lane-1)*160; player.x += (targetX - player.x) * Math.min(1, 10*dt);
- // physics
- player.vy += 2800 * dt; player.y += player.vy * dt; const ground = H*0.6; if(player.y + player.h >= ground){ player.y = ground - player.h; player.vy=0; player.onGround=true; }
- // world speed
- const base = 420 + Math.min(200, distance/100); const worldSpeed = base * (1 + Math.min(1, player.boost)); distance += worldSpeed * dt; score = Math.floor(distance/10);
- document.getElementById('hudScore').textContent = score;
- spawnTimer -= dt * worldSpeed/800; if(spawnTimer<=0){ spawnTimer = 0.8 - Math.min(0.5, distance/20000); spawnObstacle(); }
- // move obstacles & collisions
- for(let i=obstacles.length-1;i>=0;i--){ const ob=obstacles[i]; ob.x -= worldSpeed * dt; if(ob.x + ob.w < -200) obstacles.splice(i,1); else if(collide(player, ob)){ running=false; gameOver(); } }
- // coins
- for(let i=coins.length-1;i>=0;i--){ const c=coins[i]; c.x -= worldSpeed * dt; if(c.x < -200) coins.splice(i,1); else if(Math.hypot(c.x - (player.x + player.w/2), c.y - (player.y + player.h/2)) < 50){ score += 50; coins.splice(i,1);} }
+  // small UX: if tribute list is short, append a helper note
+  if(uniqueHandles.length===0){
+    tribute.innerHTML = '<div style="grid-column:1/-1;color:#dff;opacity:0.9">No creators found — paste handles into the code or give me a list and I’ll embed them.</div>';
+  }
 }
 
-function collide(a,b){ return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h); }
+/* ---------- audio init (lightweight) ---------- */
+let audioCtx=null; let buffers={};
+const soundFiles = {
+  spin: "https://assets.mixkit.co/sfx/preview/mixkit-casino-slot-machine-spinning-1935.mp3",
+  win:  "https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"
+};
+async function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    // fetch spin only (small) and decode
+    const r = await fetch(soundFiles.spin);
+    const ab = await r.arrayBuffer();
+    buffers.spin = await audioCtx.decodeAudioData(ab.slice(0));
+    // optional: prefetch win sound later
+    fetch(soundFiles.win).then(r=>r.arrayBuffer()).then(b=>audioCtx.decodeAudioData(b)).then(decoded=>buffers.win=decoded).catch(()=>{});
+  }catch(e){ console.warn('Audio init failed', e); audioCtx=null; }
+}
+function playSound(name){
+  if(muted || !audioCtx || !buffers[name]) return;
+  const s = audioCtx.createBufferSource();
+  s.buffer = buffers[name];
+  s.connect(audioCtx.destination);
+  s.start(0);
+}
+["click","keydown","touchstart"].forEach(evt => window.addEventListener(evt, ()=>initAudio(), { once:true }));
 
-function gameOver(){ // show CTA overlay
- setTimeout(()=>{
-   const claim = confirm('Run ended. Score: '+score+' points. Claim winnings on Metawin?');
-   if(claim) window.open('https://metawin.example/claim?score='+score, '_blank');
-   reset(); document.getElementById('startOverlay').style.display='flex';
- },200);
- if(score > high){ high = score; localStorage.setItem('mw_high', high); }
+/* ---------- reel logic ---------- */
+function setReel(reel, token){
+  if(token.type==='img'){
+    reel.innerHTML = `<img src="${token.v}" alt="${token.handle ? token.handle : 'pfp'}">`;
+  } else {
+    reel.textContent = token.v;
+  }
+}
+function randomToken(){
+  const idx = Math.floor(Math.random()*combinedSymbols.length);
+  return combinedSymbols[idx];
+}
+function spinReel(reel, final, steps=24){
+  return new Promise(resolve=>{
+    let i=0;
+    reel.classList.add('spinning');
+    function tick(){
+      setReel(reel, randomToken());
+      i++;
+      if(i>=steps){
+        setTimeout(()=>{ setReel(reel, final); reel.classList.remove('spinning'); resolve(final); }, 180);
+      } else {
+        setTimeout(tick, 60 + i*3);
+      }
+    }
+    tick();
+  });
 }
 
-function reset(){ obstacles.length=0; coins.length=0; distance=0; score=0; player.lane=1; player.x=160; player.y=H*0.6 - player.h; player.vy=0; running=false; }
-reset();
-
-// render
-function draw(){ ctx.clearRect(0,0,W,H); // background
- const bg = ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#1b0033'); bg.addColorStop(1,'#060510'); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
- // parallax city blocks
- for(let i=0;i<80;i++){ ctx.globalAlpha = 0.03 + (i%6)*0.01; ctx.fillStyle = (i%2)?'#7b00ff':'#00ff9b'; ctx.fillRect((i*140 + (distance/6))%(W+200)-200, 40 + (i%6)*22, 18, 12); }
- ctx.globalAlpha = 1;
- // road
- const roadY = H*0.6; ctx.fillStyle='#070707'; ctx.fillRect(0,roadY, W, H - roadY);
- for(let i=0;i<22;i++){ ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fillRect(300 + i*280 - (distance%280), roadY + 56, 160, 8); }
- // obstacles
- obstacles.forEach(ob=>{
-   ctx.save(); ctx.translate(ob.x, ob.y);
-   // draw from ASSETS
-   const img = new Image(); img.src = (ob.type==='slot')?ASSETS.slot:(ob.type==='roulette'?ASSETS.roulette:ASSETS.chip);
-   ctx.drawImage(img, 0,0, ob.w, ob.h);
-   ctx.restore();
- });
- // coins
- coins.forEach(c=>{ const img = new Image(); img.src = ASSETS.token; ctx.drawImage(img, c.x-18, c.y-18,36,36); });
- // player
- ctx.save(); const px = player.x, py = player.y; if(charImg){ ctx.drawImage(charImg, px, py, player.w, player.h); } else { ctx.drawImage(charPlaceholder, px-20, py-20, player.w+40, player.h+40); }
- // glow
- ctx.globalCompositeOperation='lighter'; ctx.fillStyle='rgba(120,0,255,0.04)'; ctx.fillRect(px-10,py-10,player.w+20,player.h+20);
- ctx.restore();
- // HUD small
- ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fillRect(8, H-40, 260, 36);
- ctx.fillStyle='#fff'; ctx.font='14px sans-serif'; ctx.fillText('Distance: '+Math.floor(distance), 16, H-14);
+/* ---------- game actions ---------- */
+async function spin(){
+  if(credits<=0){ resultEl.textContent = 'No credits left — add more!'; return; }
+  credits--; resultEl.textContent='Spinning…'; playSound('spin');
+  // pick finals from pool
+  const finals = [ randomToken(), randomToken(), randomToken() ];
+  const [a,b,c] = await Promise.all([
+    spinReel(reels[0], finals[0], 24),
+    spinReel(reels[1], finals[1], 30),
+    spinReel(reels[2], finals[2], 36)
+  ]);
+  // compare identity (if images, compare src)
+  const v0 = a.type+'|'+String(a.v), v1 = b.type+'|'+String(b.v), v2 = c.type+'|'+String(c.v);
+  if(v0===v1 && v1===v2){
+    resultEl.textContent = '🎉 JACKPOT! +50 credits!';
+    credits += 50;
+    playSound('win');
+    launchConfetti();
+  } else {
+    resultEl.textContent = 'Try again!';
+  }
 }
 
-function loop(now){ const dt = Math.min(0.033, (now-last)/1000); last=now; update(dt); draw(); requestAnimationFrame(loop); }
-requestAnimationFrame(loop);
+/* ---------- confetti ---------- */
+function launchConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const pieces = Array.from({length:120}, () => ({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height - canvas.height,
+    r: Math.random()*6+4,
+    speed: Math.random()*3+2,
+    color: `hsl(${Math.random()*360},100%,50%)`
+  }));
+  let frame=0;
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of pieces){
+      p.y += p.speed;
+      if(p.y > canvas.height) p.y = -10;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.r, p.r*0.6);
+    }
+    if(frame++ < 220) requestAnimationFrame(loop);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  loop();
+}
 
-// UI buttons
-document.getElementById('startPlay').addEventListener('click', ()=>{ document.getElementById('startOverlay').style.display='none'; running=true; });
-document.getElementById('playBtn').addEventListener('click', ()=>{ document.getElementById('startOverlay').style.display='none'; running=true; });
-document.getElementById('claimBtn').addEventListener('click', ()=>{ window.open('https://metawin.example/join', '_blank'); });
-document.getElementById('showAssets').addEventListener('click', ()=>{ showAssetPreview(); });
-document.getElementById('closeAssets').addEventListener('click', ()=>{ document.getElementById('assetOverlay').style.display='none'; });
+/* ---------- UI hooks ---------- */
+document.getElementById('spin').addEventListener('click', spin);
+document.getElementById('addCredit').addEventListener('click', ()=>{ credits += 10; resultEl.textContent = `Credits: ${credits}`; });
+document.getElementById('mute').addEventListener('click', ()=>{ muted = !muted; document.getElementById('mute').textContent = muted ? '🔇 Muted' : '🔊 Sound'; });
+document.getElementById('enterGame').addEventListener('click', ()=>{ document.getElementById('splash').style.display='none'; });
 
-document.getElementById('downloadAssets').addEventListener('click', ()=>{ exportAllAssets(); });
-
-// Asset preview and export
-function showAssetPreview(){ const list = document.getElementById('assetList'); list.innerHTML=''; for(const k in ASSETS){ const img = document.createElement('img'); img.src = ASSETS[k]; img.style.width='120px'; img.style.height='auto'; img.style.borderRadius='8px'; img.style.border='1px solid rgba(255,255,255,0.04)'; const wrap = document.createElement('div'); wrap.style.textAlign='center'; const label = document.createElement('div'); label.textContent = k; label.style.fontSize='12px'; label.style.color='#ddd'; wrap.appendChild(img); wrap.appendChild(label); list.appendChild(wrap); }
- document.getElementById('assetOverlay').style.display='flex'; }
-
-function exportAllAssets(){ // trigger downloads for each ASSETS key
- for(const k in ASSETS){ downloadURI(ASSETS[k], 'metawin_' + k + '.png'); }
- // also export a small sprite-like character placeholder
- const ch = makeCanvas(512,768); const gc=ch.getContext('2d'); gc.fillStyle='#071'; gc.fillRect(0,0,512,768); gc.drawImage(charPlaceholder, 56,80,400,500); downloadURI(ch.toDataURL('image/png'), 'metawin_character_placeholder.png'); }
-
-function downloadURI(uri, name){ const a = document.createElement('a'); a.href=uri; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
-
-// init positions on first paint
-resize(); player.x = 160; player.y = H*0.6 - player.h; last = performance.now();
-
-</script></body>
+/* ---------- startup: load avatars then enable spins ---------- */
+(async function init(){
+  resultEl.textContent = 'Loading creators and avatars…';
+  await loadCreatorsPFPs();
+  // ensure there are at least several image symbols; if not, pad with emoji
+  if(combinedSymbols.filter(s=>s.type==='img').length < 6){
+    combinedSymbols.push(...["🍒","💎","7️⃣","💰"].map(s=>({type:'emoji',v:s})));
+  }
+  resultEl.textContent = `Ready — Credits: ${credits}. Click SPIN to play (symbols: ${combinedSymbols.length}).`;
+})();
+</script>
+</body>
 </html>
